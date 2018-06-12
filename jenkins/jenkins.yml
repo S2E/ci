@@ -1,0 +1,49 @@
+# Copyright (c) 2018, Cyberhaven
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+version: '3.1'
+
+services:
+  main:
+    image: cyberhaven/s2e-jenkins
+    volumes:
+      # Allow Jenkins to create and start containers
+      # DinD must not be used (see http://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/)
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 8080:8080
+      - 50000:50000
+    secrets:
+      - source: jenkins-user
+        # Secret files are stored in /run/secrets/ in the container and are not
+        # readable by default. Fix permissions here.
+        mode: 0444
+      - source: jenkins-pass
+        mode: 0444
+      - source: jenkins-github-token
+        mode: 0444
+
+secrets:
+  jenkins-user:
+    external: true
+  jenkins-pass:
+    external: true
+  jenkins-github-token:
+    external: true
