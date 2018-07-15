@@ -67,5 +67,4 @@ windows-slaves
 matrix-auth
 text-finder
 github-pullrequest
-
-
+parameterized-trigger

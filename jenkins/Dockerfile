@@ -24,13 +24,22 @@ FROM jenkins/jenkins:lts
 
 USER root
 RUN apt-get update -qq && \
-    apt-get install -qqy apt-transport-https ca-certificates curl gnupg2 software-properties-common
+    apt-get install -qqy \
+        apt-transport-https ca-certificates curl rsync gnupg2 software-properties-common \
+        python-pip
+
 
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
 RUN add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
 
+# Use pre-compiled clang-format to speed up code style verification process
 RUN apt-get update -qq && \
-    apt-get install -y docker-ce=17.12.1~ce-0~debian
+    apt-get install -y docker-ce=17.12.1~ce-0~debian && \
+    curl https://storage.googleapis.com/git-repo-downloads/repo > /bin/repo && \
+    chmod +x /bin/repo && \
+    wget https://releases.llvm.org/3.9.0/clang+llvm-3.9.0-x86_64-linux-gnu-debian8.tar.xz && \
+    tar -xf clang+llvm-3.9.0-x86_64-linux-gnu-debian8.tar.xz && \
+    cp -r clang+llvm-3.9.0-x86_64-linux-gnu-debian8/* /
 
 RUN usermod -aG docker jenkins
 
@@ -42,4 +51,10 @@ RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
 COPY *.groovy /usr/share/jenkins/ref/init.groovy.d/
 
 COPY s2e-env /var/jenkins_home/s2e-env/
-COPY jobs/ /var/jenkins_home/jobs/
+COPY jobs-templates/ /var/jenkins_home/jobs-templates/
+
+RUN pip install -r /var/jenkins_home/jobs-templates/requirements.txt && \
+    mkdir -p /usr/share/jenkins/ref/jobs && \
+    /var/jenkins_home/jobs-templates/generate_jobs.py -t /var/jenkins_home/jobs-templates/ -j /usr/share/jenkins/ref/jobs && \
+    ls -l /usr/share/jenkins/ref/jobs
+

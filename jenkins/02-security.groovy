@@ -57,3 +57,6 @@ instance.setAuthorizationStrategy(strategy)
 
 Jenkins.instance.getInjector().getInstance(AdminWhitelistRule.class).setMasterKillSwitch(false)
 
+// This simplifies passing parameters across jobs.
+// It may be a security issue in some cases: https://jenkins.io/blog/2016/05/11/security-update/
+System.setProperty("hudson.model.ParametersAction.keepUndefinedParameters", "true")
