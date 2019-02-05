@@ -56,8 +56,9 @@ fi
 
 virtualenv venv
 . venv/bin/activate
+pip install --upgrade pip
 
-pip install --process-dependency-links .
+pip install .
 pip install pylint
 
 echo Running pylint...
