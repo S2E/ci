@@ -26,8 +26,9 @@ USER root
 RUN apt-get update -qq && \
     apt-get install -qqy \
         apt-transport-https ca-certificates curl rsync gnupg2 software-properties-common \
-        python-pip
+        python git python-pip virtualenv nano
 
+RUN pip install --upgrade pip
 
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
 RUN add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
@@ -41,7 +42,7 @@ RUN apt-get update -qq && \
     tar -xf clang+llvm-3.9.0-x86_64-linux-gnu-debian8.tar.xz && \
     cp -r clang+llvm-3.9.0-x86_64-linux-gnu-debian8/* /
 
-RUN usermod -aG docker jenkins
+USER jenkins
 
 ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false"
 
@@ -50,11 +51,13 @@ RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
 
 COPY *.groovy /usr/share/jenkins/ref/init.groovy.d/
 
-COPY s2e-env /var/jenkins_home/s2e-env/
-COPY jobs-templates/ /var/jenkins_home/jobs-templates/
+COPY s2e-env /usr/share/jenkins/ref/s2e-env/
+COPY jobs-templates/ /usr/share/jenkins/ref/jobs-templates/
 
-RUN pip install -r /var/jenkins_home/jobs-templates/requirements.txt && \
-    mkdir -p /usr/share/jenkins/ref/jobs && \
-    /var/jenkins_home/jobs-templates/generate_jobs.py -t /var/jenkins_home/jobs-templates/ -j /usr/share/jenkins/ref/jobs && \
-    ls -l /usr/share/jenkins/ref/jobs
+USER root
+RUN chown -R jenkins:jenkins /usr/share/jenkins/ref/jobs-templates
+USER jenkins
+
+RUN /usr/share/jenkins/ref/jobs-templates/build.sh
+
 
