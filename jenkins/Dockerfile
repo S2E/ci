@@ -59,5 +59,3 @@ RUN chown -R jenkins:jenkins /usr/share/jenkins/ref/jobs-templates
 USER jenkins
 
 RUN /usr/share/jenkins/ref/jobs-templates/build.sh
-
-
