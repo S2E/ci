@@ -5,6 +5,9 @@ Setting up continuous integration for S2E
 
 .. code-block:: bash
 
+    sudo apt-get install git docker.io
+
+
     echo "admin" | docker secret create jenkins-pass -
     echo "admin" | docker secret create jenkins-user -
     echo "github-token-hash" | docker secret create jenkins-github-token -
