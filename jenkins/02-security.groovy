@@ -28,7 +28,10 @@ import jenkins.security.s2m.AdminWhitelistRule
 def instance = Jenkins.getInstance()
 
 // Disable remoting
-instance.getDescriptor("jenkins.CLI").get().setEnabled(false)
+def desc = instance.getDescriptor("jenkins.CLI")
+if (desc != null) {
+    desc.get().setEnabled(false)
+}
 
 // Disable jnlp
 instance.setSlaveAgentPort(-1);
@@ -36,7 +39,7 @@ instance.setSlaveAgentPort(-1);
 // Disable old Non-Encrypted protocols
 HashSet<String> newProtocols = new HashSet<>(instance.getAgentProtocols());
 newProtocols.removeAll(Arrays.asList(
-        "JNLP3-connect", "JNLP2-connect", "JNLP-connect", "CLI-connect"
+    "JNLP3-connect", "JNLP2-connect", "JNLP-connect", "CLI-connect"
 ));
 instance.setAgentProtocols(newProtocols);
 
