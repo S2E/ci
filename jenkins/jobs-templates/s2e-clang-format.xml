@@ -23,31 +23,14 @@
   <builders>
     <hudson.tasks.Shell>
       <command>export CLANG_FORMAT=clang-format
-S2E_BUILD_SCRIPTS_REPO=https://github.com/S2E/build-scripts.git
 REFSPEC=&quot;+refs/pull/${GITHUB_PR_NUMBER}/merge:refs/remotes/origin-pull/pull/${GITHUB_PR_NUMBER}/merge&quot;
 
-
-git clone ${S2E_BUILD_SCRIPTS_REPO} build-scripts
 git clone ${GITHUB_REPO_GIT_URL} project
 
 $(cd project &amp;&amp; git fetch origin ${REFSPEC} &amp;&amp; git checkout ${GITHUB_PR_HEAD_SHA})
 
-ln -s ./build-scripts/.clang-format
-
-FILE_EXTS=&quot;.c .h .cpp .hpp .cc .hh .cxx&quot;
-
-# We don&apos;t use run-clang-format.sh because we checkout everything into &quot;project&quot;.
-# Whitelist project/windows because of the guest-tools repo, which contains
-# windows code that is formatted by Visual Studio.
-for EXT in ${FILE_EXTS}; do
-    echo &quot;Applying clang-format to ${EXT} files...&quot;
-    find -type f -name &quot;*${EXT}&quot;                    \
-        -not -path &quot;./project/windows/*&quot;            \
-        -not -path &quot;./build-scripts/*&quot;              \
-        -exec ${CLANG_FORMAT} -i -style=file {} +
-done
-
 cd project
+./run-clang-format.sh
 
 OUTPUT=&quot;$(git status --porcelain --untracked-files=no)&quot;
 if [ &quot;x$OUTPUT&quot; = &quot;x&quot; ]; then
