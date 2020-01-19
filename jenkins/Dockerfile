@@ -26,7 +26,7 @@ USER root
 RUN apt-get update -qq && \
     apt-get install -qqy \
         apt-transport-https ca-certificates curl rsync gnupg2 software-properties-common \
-        python git python-pip virtualenv nano
+        python git python-pip virtualenv nano libmagic-dev
 
 RUN pip install --upgrade pip
 

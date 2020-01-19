@@ -73,10 +73,8 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>DOCKER_IMAGE=s2e-jenkins-s2e-env:${BUILD_NUMBER}
-S2E_BUILD_SCRIPTS_REPO=https://github.com/S2E/build-scripts.git
-
-${JENKINS_HOME}/s2e-env/s2e-env.sh ${S2E_BUILD_SCRIPTS_REPO} $(pwd)
+      <command>
+${JENKINS_HOME}/s2e-env/s2e-env.sh $(pwd)
 </command>
     </hudson.tasks.Shell>
   </builders>
