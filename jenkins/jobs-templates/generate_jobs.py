@@ -34,53 +34,9 @@ from jinja2 import Template
 log.basicConfig(level=0)
 
 TRIGGERS_CFG = {
-    'trigger-libcpu': {
-        'repo': 'https://github.com/S2E/libcpu.git',
-        'url': 'https://github.com/S2E/libcpu/'
-    },
-    'trigger-libtcg': {
-        'repo': 'https://github.com/S2E/libtcg.git',
-        'url': 'https://github.com/S2E/libtcg/'
-    },
-    'trigger-libs2e': {
-        'repo': 'https://github.com/S2E/libs2e.git',
-        'url': 'https://github.com/S2E/libs2e/'
-    },
-    'trigger-libs2ecore': {
-        'repo': 'https://github.com/S2E/libs2ecore.git',
-        'url': 'https://github.com/S2E/libs2ecore/'
-    },
-    'trigger-libs2eplugins': {
-        'repo': 'https://github.com/S2E/libs2eplugins.git',
-        'url': 'https://github.com/S2E/libs2eplugins/'
-    },
-    'trigger-libvmi': {
-        'repo': 'https://github.com/S2E/libvmi.git',
-        'url': 'https://github.com/S2E/libvmi/'
-    },
-    'trigger-guest-tools': {
-        'repo': 'https://github.com/S2E/guest-tools.git',
-        'url': 'https://github.com/S2E/guest-tools/'
-    },
-    'trigger-libfsigcxx': {
-        'repo': 'https://github.com/S2E/libfsigcxx.git',
-        'url': 'https://github.com/S2E/libfsigcxx/'
-    },
-    'trigger-tools': {
-        'repo': 'https://github.com/S2E/tools.git',
-        'url': 'https://github.com/S2E/tools/'
-    },
-    'trigger-klee': {
-        'repo': 'https://github.com/S2E/klee.git',
-        'url': 'https://github.com/S2E/klee/'
-    },
-    'trigger-libcoroutine': {
-        'repo': 'https://github.com/S2E/libcoroutine.git',
-        'url': 'https://github.com/S2E/libcoroutine/'
-    },
-    'trigger-libq': {
-        'repo': 'https://github.com/S2E/libq.git',
-        'url': 'https://github.com/S2E/libq/'
+    'trigger-s2e': {
+        'repo': 'https://github.com/S2E/s2e.git',
+        'url': 'https://github.com/S2E/s2e/'
     },
 }
 
