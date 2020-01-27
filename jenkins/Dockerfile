@@ -38,9 +38,9 @@ RUN apt-get update -qq && \
     apt-get install -y docker-ce=17.12.1~ce-0~debian && \
     curl https://storage.googleapis.com/git-repo-downloads/repo > /bin/repo && \
     chmod +x /bin/repo && \
-    wget https://releases.llvm.org/3.9.0/clang+llvm-3.9.0-x86_64-linux-gnu-debian8.tar.xz && \
-    tar -xf clang+llvm-3.9.0-x86_64-linux-gnu-debian8.tar.xz && \
-    cp -r clang+llvm-3.9.0-x86_64-linux-gnu-debian8/* /
+    wget http://releases.llvm.org/9.0.0/clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz && \
+    tar -xf clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz && \
+    cp -r clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-18.04/* /
 
 USER jenkins
 
