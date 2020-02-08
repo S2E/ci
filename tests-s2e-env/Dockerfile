@@ -1,5 +1,4 @@
-#!/bin/bash
-# Copyright (c) 2018, Cyberhaven
+# Copyright (c) 2020, Cyberhaven
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -19,21 +18,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# This script checks out, installs, and tests the specified s2e-env repository
+# Creates a fresh docker image for testing S2E.
 
-set -ex
+FROM ubuntu:18.04
+MAINTAINER Vitaly Chipounov <vitaly@cyberhaven.io>
 
-virtualenv venv
-. venv/bin/activate
-pip install --upgrade pip
+RUN sed -i '1ideb mirror://mirrors.ubuntu.com/mirrors.txt xenial main restricted' /etc/apt/sources.list && \
+    sed -i '1ideb mirror://mirrors.ubuntu.com/mirrors.txt xenial-updates main restricted' /etc/apt/sources.list && \
+    sed -i '1ideb mirror://mirrors.ubuntu.com/mirrors.txt xenial-security main restricted' /etc/apt/sources.list
 
-pip install .
-pip install pylint
 
-echo Running pylint...
-pylint -rn --rcfile=./pylint_rc s2e_env
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y less sudo
 
-echo Running tests...
-export TERM=linux
-export TERMINFO=/etc/terminfo
-python setup.py test
+# These are the minimum packages required to run s2e-env
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y git gcc python3 python3-dev python3-venv
+
+RUN useradd -U -m -d /home/s2e -s /bin/bash -G sudo s2e
+RUN echo "ALL            ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+USER s2e
+COPY install.sh /home/s2e
+WORKDIR /home/s2e
+ENTRYPOINT ["/home/s2e/install.sh"]

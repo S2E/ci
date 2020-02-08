@@ -1,4 +1,6 @@
-# Copyright (c) 2017, Cyberhaven
+#!/bin/sh
+
+# Copyright (c) 2020, Cyberhaven
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,19 +20,49 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Provides a docker container to check s2e-env (code style, unit tests, etc.)
+set -xeu
 
-FROM ubuntu:16.04
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 branch_name"
+    exit 1
+fi
 
-# Install build dependencies
-RUN apt-get update &&                                                       \
-    apt-get -y install python python-pip git virtualenv
+CUR_DIR="$(pwd)"
+BRANCH="$1"
 
-RUN groupadd -g 1111 s2e && \
-    useradd -r -u 1111 -g s2e s2e
+git clone https://github.com/s2e/s2e-env.git
+cd s2e-env
 
+set +e
+git checkout $BRANCH
+set -e
 
-COPY . /home/s2e/
-RUN chown -R s2e:s2e /home/s2e
-USER s2e
-WORKDIR /home/s2e
+python3 -m venv venv
+. venv/bin/activate
+pip install --upgrade pip
+pip install .
+
+cd "$CUR_DIR"
+
+git config --global user.email "test@example.com"
+git config --global user.name "John Doe"
+git config --global color.ui "auto"
+
+s2e init -n env
+
+cd env/source
+repo sync
+
+set +e
+for d in *; do
+  if [ -d "$d" ]; then
+    cd "$d"
+    git checkout $BRANCH
+    cd ..
+  fi
+done
+set -e
+
+cd "$CUR_DIR/env"
+
+s2e build

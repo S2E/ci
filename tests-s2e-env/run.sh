@@ -1,5 +1,6 @@
 #!/bin/sh
-# Copyright (c) 2019, Cyberhaven
+
+# Copyright (c) 2020, Cyberhaven
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -19,13 +20,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-REF=/usr/share/jenkins/ref
-JOBS_TEMPLATES="$REF/jobs-templates"
+set -xue
 
-cd "$JOBS_TEMPLATES"
-virtualenv venv
-. venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
-mkdir -p "$REF/jobs"
-./generate_jobs.py -t "$JOBS_TEMPLATES" -j "$REF/jobs"
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 branch_name"
+    exit 1
+fi
+
+BRANCH="$1"
+
+docker build -t cyberhaven/s2e-test-fresh -f Dockerfile .
+
+docker run --rm -ti cyberhaven/s2e-test-fresh $BRANCH

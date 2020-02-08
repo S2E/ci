@@ -1,4 +1,6 @@
-# Copyright (c) 2018, Cyberhaven
+#!/bin/sh
+
+# Copyright (c) 2020, Cyberhaven
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,32 +20,32 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-version: '3.1'
+set -xue
 
-services:
-  main:
-    image: cyberhaven/s2e-jenkins
-    volumes:
-      # Allow Jenkins to create and start containers
-      # DinD must not be used (see http://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/)
-      - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - 8080:8080
-      - 50000:50000
-    secrets:
-      - source: jenkins-user
-        # Secret files are stored in /run/secrets/ in the container and are not
-        # readable by default. Fix permissions here.
-        mode: 0444
-      - source: jenkins-pass
-        mode: 0444
-      - source: jenkins-github-token
-        mode: 0444
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 branch_name"
+    exit 1
+fi
 
-secrets:
-  jenkins-user:
-    external: true
-  jenkins-pass:
-    external: true
-  jenkins-github-token:
-    external: true
+BRANCH="$1"
+
+mkdir s2e
+cd s2e
+
+S2EDIR="$(pwd)"
+
+repo init -u https://github.com/s2e/manifest.git
+repo sync
+
+set +e
+for d in *; do
+  if [ -d "$d" ]; then
+    cd "$d"
+    git checkout $BRANCH
+    cd ..
+  fi
+done
+set -e
+
+mkdir build && cd build
+make -f $S2EDIR/Makefile.docker demo
