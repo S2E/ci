@@ -42,9 +42,9 @@ RUN apt-get -y install libdwarf-dev libelf-dev libelf-dev:i386 \
 # Use pre-compiled clang-format to speed up code style verification process
 RUN curl https://storage.googleapis.com/git-repo-downloads/repo > /bin/repo && \
     chmod +x /bin/repo && \
-    wget http://releases.llvm.org/9.0.0/clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz && \
-    tar -xf clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz && \
-    cp -r clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-18.04/* /
+    wget https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz && \
+    tar -xf clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz && \
+    cp -r clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/* /
 
 RUN groupadd s2e && useradd -m -g s2e s2e
 
